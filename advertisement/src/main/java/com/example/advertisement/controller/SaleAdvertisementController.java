@@ -24,4 +24,9 @@ public class SaleAdvertisementController {
     public ResponseEntity<SaleAdvertisementDto> createSaleAdvertisement(@RequestBody CreateSaleAdvertisementRequest request){
         return ResponseEntity.ok(saleAdvertisementService.createSaleAdvertisement(request));
     }
+
+    @PostMapping("/random-advertisement")
+    public ResponseEntity<String> createRandomAdvertisements(){
+        return ResponseEntity.ok(saleAdvertisementService.createRandomSaleAdvertisement());
+    }
 }

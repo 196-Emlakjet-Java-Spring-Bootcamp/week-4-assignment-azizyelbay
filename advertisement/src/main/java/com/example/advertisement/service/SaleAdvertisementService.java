@@ -16,14 +16,16 @@ public class SaleAdvertisementService {
     private final SaleAdvertisementRepository saleAdvertisementRepository;
     private final UserService userService;
     private final SaleAdvertisementDtoConverter converter;
+    private final KafkaTemplate <String, SaleAdvertisement> kafkaSaleAdvertisementTemplate;
     private static final String[] firstTitle = {"satilik", "kiralik", "temiz", "doktordan", "ihtiyactan"};
     private static final String[] secondTitle = {"ev","araba","villa","arsa"};
     private static final String[] deatilMessages = {"Ihtiyactan satilik","Asansorlu","Kombili","fiber altyapisi var","Guven emlak","aktas emlak", "Kalite guven bizim isimiz"};
 
-    public SaleAdvertisementService(SaleAdvertisementRepository saleAdvertisementRepository, UserService userService, SaleAdvertisementDtoConverter converter) {
+    public SaleAdvertisementService(SaleAdvertisementRepository saleAdvertisementRepository, UserService userService, SaleAdvertisementDtoConverter converter, KafkaTemplate<String, SaleAdvertisement> kafkaSaleAdvertisementTemplate) {
         this.saleAdvertisementRepository = saleAdvertisementRepository;
         this.userService = userService;
         this.converter = converter;
+        this.kafkaSaleAdvertisementTemplate = kafkaSaleAdvertisementTemplate;
     }
 
     public SaleAdvertisementDto createSaleAdvertisement(CreateSaleAdvertisementRequest createSaleAdvertisementRequest) {
@@ -41,7 +43,7 @@ public class SaleAdvertisementService {
 
         return converter.convert(saleAdvertisementRepository.save(saleAdvertisement));
     }
-/*
+
     public String createRandomSaleAdvertisement() {
 
         Random random = new Random();
@@ -54,11 +56,12 @@ public class SaleAdvertisementService {
             saleAdvertisement.setPrice(random.nextInt(5000000));
             saleAdvertisement.setDetailMessage(deatilMessages[random.nextInt(deatilMessages.length)]);
             saleAdvertisement.setUser(userService.getRandomUser());
-            // kafkaTemplate.send("sale-topic", saleAdvertisement);
+
+            kafkaSaleAdvertisementTemplate.send("sale-topic", saleAdvertisement);
+
             i++;
         }
 
-        return "Random users sent";
-
-    }*/
+        return "Random advertisements sent";
+    }
 }

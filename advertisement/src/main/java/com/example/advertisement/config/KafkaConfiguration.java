@@ -27,7 +27,12 @@ public class KafkaConfiguration {
     private String kafkaAddress;
 
     @Bean
-    public KafkaTemplate<String, User> kafkaTemplate() {
+    public KafkaTemplate<String, User> kafkaUserTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, SaleAdvertisement> kafkaSaleAdvertisementTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
@@ -42,21 +47,36 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, User> kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, User> userKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, User> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                consumerConfigs(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(User.class,false)));
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, User> consumerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, SaleAdvertisement> saleAdvertisementKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, SaleAdvertisement> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                consumerConfigs(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(SaleAdvertisement.class,false)));
+        return factory;
+    }
+
+    private Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, User.class);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(props);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializerWithJTM.class);
+        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 25000);
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 35000);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100");
+        return props;
     }
 }

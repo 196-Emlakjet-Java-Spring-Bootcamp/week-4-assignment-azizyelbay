@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="sale_advertisements")
@@ -20,7 +21,7 @@ public class SaleAdvertisement {
     private String title;
     private int price;
     private String detailMessage;
-
+    private LocalDateTime createdAt;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)// delete all advertisements when a user is deleted
