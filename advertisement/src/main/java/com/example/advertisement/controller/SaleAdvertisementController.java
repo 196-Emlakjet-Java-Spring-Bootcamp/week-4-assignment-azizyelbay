@@ -57,4 +57,9 @@ public class SaleAdvertisementController {
     public ResponseEntity<List<SaleAdvertisementDto>> findSaleAdvertisementsByPriceBetween(@RequestParam(name = "startPrice") int startPrice, @RequestParam("endPrice") int endPrice){
         return ResponseEntity.ok(saleAdvertisementService.findSaleAdvertisementsByPriceBetween(startPrice,endPrice));
     }
+
+    @GetMapping("/findLastSaleAdvertisementsOfEachUser")
+    public ResponseEntity<List<SaleAdvertisementDto>> findLastSaleAdvertisementsOfEachUser(){
+        return ResponseEntity.ok(saleAdvertisementService.findLastSaleAdvertisementsOfEachUser());
+    }
 }

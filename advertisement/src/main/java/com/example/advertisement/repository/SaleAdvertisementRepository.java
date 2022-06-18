@@ -1,7 +1,6 @@
 package com.example.advertisement.repository;
 
 import com.example.advertisement.model.SaleAdvertisement;
-import com.example.advertisement.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,4 +18,12 @@ public interface SaleAdvertisementRepository extends JpaRepository<SaleAdvertise
     List<SaleAdvertisement> findSaleAdvertisementsByTitleContainingIgnoreCase(String title);
 
     List<SaleAdvertisement> findSaleAdvertisementsByDetailMessageContainingIgnoreCase(String description);
+
+    @Query(nativeQuery=true, value="SELECT *\n" +
+            "FROM  (\n" +
+            "    SELECT DISTINCT ON (user_id) *\n" +
+            "    FROM   sale_advertisements\n" +
+            "    ) p\n" +
+            "ORDER  BY created_at DESC Limit 10;")
+    List<SaleAdvertisement> findLastSaleAdvertisementsOfEachUser();
 }

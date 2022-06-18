@@ -101,4 +101,11 @@ public class SaleAdvertisementService {
                 .map(converter::convert)
                 .collect(Collectors.toList());
     }
+
+    public List<SaleAdvertisementDto> findLastSaleAdvertisementsOfEachUser() {
+        return saleAdvertisementRepository.findLastSaleAdvertisementsOfEachUser()
+                .stream()
+                .map(converter::convert)
+                .collect(Collectors.toList());
+    }
 }
