@@ -9,7 +9,9 @@ import com.example.advertisement.repository.SaleAdvertisementRepository;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class SaleAdvertisementService {
@@ -63,5 +65,40 @@ public class SaleAdvertisementService {
         }
 
         return "Random advertisements sent";
+    }
+
+    public List<SaleAdvertisementDto> findSaleAdvertisementsCreatedAtDESC() {
+        return saleAdvertisementRepository.findByCreatedAtDESC()
+                .stream()
+                .map(converter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleAdvertisementDto> findSaleAdvertisementsCreatedAtASC() {
+        return saleAdvertisementRepository.findByCreatedAtASC()
+                .stream()
+                .map(converter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleAdvertisementDto> findSaleAdvertisementsByTitleContainingIgnoreCase(String title) {
+        return saleAdvertisementRepository.findSaleAdvertisementsByTitleContainingIgnoreCase(title)
+                .stream()
+                .map(converter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleAdvertisementDto> findSaleAdvertisementsByDetailMessageContainingIgnoreCase(String detailMessage) {
+        return saleAdvertisementRepository.findSaleAdvertisementsByDetailMessageContainingIgnoreCase(detailMessage)
+                .stream()
+                .map(converter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<SaleAdvertisementDto> findSaleAdvertisementsByPriceBetween(int startPrice, int endPrice) {
+        return saleAdvertisementRepository.findSaleAdvertisementsByPriceBetween(startPrice, endPrice)
+                .stream()
+                .map(converter::convert)
+                .collect(Collectors.toList());
     }
 }

@@ -35,7 +35,8 @@ public class KafkaService {
             groupId = "group-id",
             containerFactory = "saleAdvertisementKafkaListenerContainerFactory"
     )
-    public void consumeSaleAdvertisement(SaleAdvertisement saleAdvertisement) {
+    public void consumeSaleAdvertisement(SaleAdvertisement saleAdvertisement) throws InterruptedException {
+        Thread.sleep(2*1000);
         saleAdvertisement.setCreatedAt(LocalDateTime.now());
         saleAdvertisementRepository.save(saleAdvertisement);
     }
